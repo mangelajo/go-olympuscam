@@ -21,28 +21,20 @@ import (
 	"github.com/mangelajo/go-olympuscam/camera"
 )
 
-// poweroffCmd represents the poweroff command
-var poweroffCmd = &cobra.Command{
-	Use:   "poweroff",
-	Short: "Power off camera",
-
+// switchModeCmd represents the switchMode command
+var switchModeCmd = &cobra.Command{
+	Use:   "switch-mode [play, rec or shutter]",
+	Short: "Switch camera mode between play, rec, and shutter",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) < 1 {
+			exitError("switch-mode needs the mode to set the camera in (play, rec or shutter)")
+		}
 		cam := camera.NewClient()
-		err := cam.PowerOff()
-		exitOnError(err, "powering off")
+		err := cam.SwitchMode(camera.CameraMode(args[0]))
+		exitOnError(err, "switching camera mode")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(poweroffCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// poweroffCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// poweroffCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(switchModeCmd)
 }

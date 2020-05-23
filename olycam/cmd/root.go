@@ -85,3 +85,16 @@ func initConfig() {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }
+
+
+func exitOnError(err error, message string) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error %s -> %s", message, err)
+		os.Exit(1)
+	}
+}
+
+func exitError(msg string) {
+	fmt.Fprintln(os.Stderr, msg)
+	os.Exit(1)
+}

@@ -16,33 +16,28 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/spf13/cobra"
 
 	"github.com/mangelajo/go-olympuscam/camera"
 )
 
-// poweroffCmd represents the poweroff command
-var poweroffCmd = &cobra.Command{
-	Use:   "poweroff",
-	Short: "Power off camera",
-
+// getCommandlistCmd represents the getCommandlist command
+var getCommandlistCmd = &cobra.Command{
+	Use:   "get-commandlist",
+	Short: "Get the list of supported commands",
 	Run: func(cmd *cobra.Command, args []string) {
 		cam := camera.NewClient()
-		err := cam.PowerOff()
-		exitOnError(err, "powering off")
+		cmdList, err := cam.GetCommandList()
+		exitOnError(err, "getting command list")
+		for _, x := range cmdList.Cgi {
+			fmt.Printf(" -> [%s]\t%s\n",  strings.ToUpper(x.HTTPMethod.Type), x.Name)
+		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(poweroffCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// poweroffCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// poweroffCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(getCommandlistCmd)
 }
