@@ -1,0 +1,23 @@
+name: check-pr
+
+on: pull_request
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v2
+    - name: Unit tests
+      run: |
+        cd camera
+        export GO111MODULE=on
+        go test -v -ginkgo.v -cover -race
+
+    - name: Build olycam
+      run: |
+        export GO111MODULE=on
+        mkdir bin
+        go build -o bin/olycam olycam/main.go
