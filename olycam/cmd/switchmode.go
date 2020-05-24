@@ -29,12 +29,38 @@ var switchModeCmd = &cobra.Command{
 		if len(args) < 1 {
 			exitError("switch-mode needs the mode to set the camera in (play, rec or shutter)")
 		}
+		mode := validateModeName(args[0])
+		qty := validateLiveQuality(lvqty)
 		cam := camera.NewClient()
-		err := cam.SwitchMode(camera.CameraMode(args[0]))
+		err := cam.SwitchMode(mode, qty)
 		exitOnError(err, "switching camera mode")
 	},
 }
 
+var lvqty string
+
 func init() {
 	rootCmd.AddCommand(switchModeCmd)
+	switchModeCmd.Flags().StringVarP(&lvqty, "live-quality", "l", "480p", "Live view quality, 240p or 480p")
+}
+
+func validateModeName(mode string) camera.CameraMode{
+	switch mode {
+	case "play": return camera.ModePlay
+	case "shutter": return camera.ModeShutter
+	case "rec": return camera.ModeRec
+	default:
+		exitError("Unknown camera mode, please use play, shutter or rec")
+	}
+	return ""
+}
+
+func validateLiveQuality(lvqty string) camera.LiveQuality {
+	switch lvqty {
+	case "240p": return camera.Live240p
+	case "480p": return camera.Live480p
+	default:
+		exitError("Unsupported preview size: use 240p or 480p")
+	}
+	return ""
 }

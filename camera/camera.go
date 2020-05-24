@@ -22,6 +22,12 @@ const (
 
 )
 
+type LiveQuality string
+const (
+	Live240p LiveQuality = "0320x0240"
+	Live480p LiveQuality = "0640x0480"
+	)
+
 type Client struct {
 	clientMu sync.Mutex
 	client *http.Client
@@ -35,8 +41,8 @@ func NewClient() *Client {
 	}
 }
 
-func (c *Client) SwitchMode(mode CameraMode) error {
-	resp, err := c.client.Get(c.baseUrl + "switch_cammode.cgi?mode=" + string(mode))
+func (c *Client) SwitchMode(mode CameraMode, lvqty LiveQuality) error {
+	resp, err := c.client.Get(c.baseUrl + "switch_cammode.cgi?mode=" + string(mode)+ "&lvqty="+ string(lvqty))
 	defer resp.Body.Close()
 	return ExpectOK(resp, err)
 }

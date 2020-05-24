@@ -36,7 +36,7 @@ var _ = Describe("Camera clientf", func() {
 				w.WriteHeader(http.StatusOK)
 			})
 
-			err := client.SwitchMode(ModeShutter)
+			err := client.SwitchMode(ModeShutter, Live480p)
 			Expect(err).NotTo(HaveOccurred())
 		})
 	})
@@ -64,4 +64,12 @@ func testSetup() (client *Client, mux *http.ServeMux, teardown func()) {
 	client.baseUrl = server.URL + "/"
 
 	return client, mux, server.Close
+}
+
+
+func ExpectHttpParam(r *http.Request, param, value string) {
+	keys, ok := r.URL.Query()[param]
+	Expect(ok).To(BeTrue())
+	Expect(keys).To(HaveLen(1))
+	Expect(keys[0]).To(Equal(value))
 }

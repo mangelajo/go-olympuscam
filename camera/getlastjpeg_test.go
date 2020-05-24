@@ -16,10 +16,7 @@ var _ = Describe("GetLastJpeg", func() {
 
 			mux.HandleFunc("/exec_takemisc.cgi", func(w http.ResponseWriter, r *http.Request) {
 				Expect(r.Method).To(Equal("GET"))
-				keys, ok := r.URL.Query()["com"]
-				Expect(ok).To(BeTrue())
-				Expect(keys).To(HaveLen(1))
-				Expect(keys[0]).To(Equal("getlastjpg"))
+				ExpectHttpParam(r, "com", "getlastjpg")
 				fmt.Fprint(w, getLastJpegOutput)
 			})
 
