@@ -22,17 +22,17 @@ import (
 )
 
 // poweroffCmd represents the poweroff command
-var poweroffCmd = &cobra.Command{
-	Use:   "poweroff",
-	Short: "Power off camera",
+var getrecviewCmd = &cobra.Command{
+	Use:   "get-recview",
+	Short: "Get the rec view as a JPEG",
 
 	Run: func(cmd *cobra.Command, args []string) {
 		cam := camera.NewClient()
-		err := cam.PowerOff()
-		exitOnError(err, "powering off")
+		_, err := cam.GetRecView()
+		exitOnError(err, "getting rec view")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(poweroffCmd)
+	rootCmd.AddCommand(getrecviewCmd)
 }

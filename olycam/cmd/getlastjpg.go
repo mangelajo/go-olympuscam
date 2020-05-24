@@ -16,23 +16,38 @@ limitations under the License.
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 
 	"github.com/mangelajo/go-olympuscam/camera"
 )
 
 // poweroffCmd represents the poweroff command
-var poweroffCmd = &cobra.Command{
-	Use:   "poweroff",
-	Short: "Power off camera",
+var getLastJpegCmd = &cobra.Command{
+	Use:   "get-lastjpg",
+	Short: "Get the last jpeg",
 
 	Run: func(cmd *cobra.Command, args []string) {
 		cam := camera.NewClient()
-		err := cam.PowerOff()
-		exitOnError(err, "powering off")
+		jpegBytes, err := cam.GetLastJpeg()
+		exitOnError(err, "Get last jpeg")
+
+		file, err := os.Create(outputJpeg)
+		defer file.Close()
+		exitOnError(err, "Opening output file")
+
+		_, err = file.Write(jpegBytes)
+		exitOnError(err, "Writing jpeg data")
 	},
 }
 
+var outputJpeg string
+
 func init() {
-	rootCmd.AddCommand(poweroffCmd)
+	rootCmd.AddCommand(getLastJpegCmd)
+
+	getLastJpegCmd.PersistentFlags().StringVarP(&outputJpeg, "file", "f", "lastjpg.jpg",
+		"Output jpeg file")
+
 }
