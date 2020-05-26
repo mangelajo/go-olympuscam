@@ -32,17 +32,25 @@ type Client struct {
 	clientMu sync.Mutex
 	client *http.Client
 	baseUrl string
+	mode CameraMode
+	lvqty LiveQuality
+	livePreviewStopCh chan struct{}
 }
 
 func NewClient() *Client {
 	return &Client{
 		client: &http.Client{},
 		baseUrl: "http://"+DefaultIp +"/",
+		mode: ModePlay,
+		lvqty: Live480p,
 	}
 }
 
 func (c *Client) SwitchMode(mode CameraMode, lvqty LiveQuality) error {
 	resp, err := c.client.Get(c.baseUrl + "switch_cammode.cgi?mode=" + string(mode)+ "&lvqty="+ string(lvqty))
+	if err != nil {
+		c.lvqty = lvqty
+	}
 	defer resp.Body.Close()
 	return ExpectOK(resp, err)
 }
